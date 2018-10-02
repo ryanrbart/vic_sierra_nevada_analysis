@@ -3,8 +3,15 @@
 
 source("R/0_utilities.R")
 source("R/1.1_data_processing_american.R")
+source("R/1.1_data_processing_cosumnes.R")
+source("R/1.1_data_processing_mokelumne.R")
+source("R/1.1_data_processing_stan.R")
 source("R/1.1_data_processing_tuolumne.R")
+source("R/1.1_data_processing_merced.R")
+source("R/1.1_data_processing_sanjoaq.R")
 source("R/1.1_data_processing_kings.R")
+source("R/1.1_data_processing_kaweah.R")
+source("R/1.1_data_processing_tule.R")
 source("R/1.1_data_processing_kern.R")
 
 
@@ -27,15 +34,29 @@ consolidate_shed_data <- function(x){
 }
 
 etqswe_american_d <- consolidate_shed_data(etqswe_american)
+etqswe_cosumnes_d <- consolidate_shed_data(etqswe_cosumnes)
+etqswe_mokelumne_d <- consolidate_shed_data(etqswe_mokelumne)
+etqswe_stan_d <- consolidate_shed_data(etqswe_stan)
 etqswe_tuolumne_d <- consolidate_shed_data(etqswe_tuolumne)
+etqswe_merced_d <- consolidate_shed_data(etqswe_merced)
+etqswe_sanjoaq_d <- consolidate_shed_data(etqswe_sanjoaq)
 etqswe_kings_d <- consolidate_shed_data(etqswe_kings)
+etqswe_kaweah_d <- consolidate_shed_data(etqswe_kaweah)
+etqswe_tule_d <- consolidate_shed_data(etqswe_tule)
 etqswe_kern_d <- consolidate_shed_data(etqswe_kern)
 
 # Combine tibbles for each watershed to a single tibble
 etqswe_d <- dplyr::bind_rows(etqswe_american_d,
-                 etqswe_tuolumne_d,
-                 etqswe_kings_d,
-                 etqswe_kern_d)
+                             etqswe_cosumnes_d,
+                             etqswe_mokelumne_d,
+                             etqswe_stan_d,
+                             etqswe_tuolumne_d,
+                             etqswe_merced_d,
+                             etqswe_sanjoaq_d,
+                             etqswe_kings_d,
+                             etqswe_kaweah_d,
+                             etqswe_tule_d,
+                             etqswe_kern_d)
 
 # Add yearday (yd) and wateryearday (wyd) to tibble
 etqswe_d <- etqswe_d %>% 
@@ -65,7 +86,9 @@ etqswe_day_gcm_mean <- etqswe_day %>%
 scenario_levels <- c("hist", "45", "85")
 etqswe_day$scenario <- factor(etqswe_day$scenario, levels = scenario_levels)
 etqswe_day_gcm_mean$scenario <- factor(etqswe_day_gcm_mean$scenario, levels = scenario_levels)
-shed_levels <- c("american", "tuolumne", "kings","kern")
+shed_levels <- c("american","cosumnes","mokelumne","stan",
+                 "tuolumne","merced","sanjoaq","kings",
+                 "kaweah","tule","kern")
 etqswe_day$watershed <- factor(etqswe_day$watershed, levels = shed_levels)
 etqswe_day_gcm_mean$watershed <- factor(etqswe_day_gcm_mean$watershed, levels = shed_levels)
 
