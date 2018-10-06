@@ -7,7 +7,7 @@ source("R/1.2_data_processing_combined.R")
 # Compute surplus and deficit between historical and RCP 8.5 scenario
 
 sur_def_et <- etqswe_day_gcm_mean %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(Q,SWE)) %>%   
   spread(key=scenario, value=ET) %>% 
   dplyr::mutate(deficit = dplyr::if_else(hist > `85`,hist - `85`, 0)) %>% 
@@ -20,7 +20,7 @@ sur_def_et <- etqswe_day_gcm_mean %>%
   dplyr::mutate(MAET_diff = MAET_surplus - MAET_deficit)
 
 sur_def_q <- etqswe_day_gcm_mean %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(ET,SWE)) %>%   
   spread(key=scenario, value=Q) %>% 
   dplyr::mutate(deficit = dplyr::if_else(hist > `85`,hist - `85`, 0)) %>% 
@@ -33,7 +33,7 @@ sur_def_q <- etqswe_day_gcm_mean %>%
   dplyr::mutate(MAQ_diff = MAQ_surplus - MAQ_deficit)
 
 sur_def_swe <- etqswe_day_gcm_mean %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(ET,Q)) %>%   
   spread(key=scenario, value=SWE) %>% 
   dplyr::mutate(deficit = dplyr::if_else(hist > `85`,hist - `85`, 0)) %>% 
@@ -59,7 +59,7 @@ write_csv(sur_def_swe, "output/swe_surplus_deficit_85.csv")
 # Compute surplus and deficit between historical and RCP 4.5 scenario
 
 sur_def_et <- etqswe_day_gcm_mean %>% 
-  dplyr::filter(scenario != 85) %>% 
+  dplyr::filter(scenario != 85 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(Q,SWE)) %>%   
   spread(key=scenario, value=ET) %>% 
   dplyr::mutate(deficit = dplyr::if_else(hist > `45`,hist - `45`, 0)) %>% 
@@ -72,7 +72,7 @@ sur_def_et <- etqswe_day_gcm_mean %>%
   dplyr::mutate(MAET_diff = MAET_surplus - MAET_deficit)
 
 sur_def_q <- etqswe_day_gcm_mean %>% 
-  dplyr::filter(scenario != 85) %>% 
+  dplyr::filter(scenario != 85 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(ET,SWE)) %>%   
   spread(key=scenario, value=Q) %>% 
   dplyr::mutate(deficit = dplyr::if_else(hist > `45`,hist - `45`, 0)) %>% 
@@ -85,7 +85,7 @@ sur_def_q <- etqswe_day_gcm_mean %>%
   dplyr::mutate(MAQ_diff = MAQ_surplus - MAQ_deficit)
 
 sur_def_swe <- etqswe_day_gcm_mean %>% 
-  dplyr::filter(scenario != 85) %>% 
+  dplyr::filter(scenario != 85 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(ET,Q)) %>%   
   spread(key=scenario, value=SWE) %>% 
   dplyr::mutate(deficit = dplyr::if_else(hist > `45`,hist - `45`, 0)) %>% 
@@ -106,5 +106,56 @@ write_csv(sur_def_et, "output/et_surplus_deficit_45.csv")
 write_csv(sur_def_q, "output/q_surplus_deficit_45.csv")
 write_csv(sur_def_swe, "output/swe_surplus_deficit_45.csv")
 
+
+# ---------------------------------------------------------------------
+# Compute surplus and deficit between historical and RCP 8.5alt40pc scenario
+
+sur_def_et <- etqswe_day_gcm_mean %>% 
+  dplyr::filter(scenario != 45 & scenario != 85) %>% 
+  dplyr::select(-c(Q,SWE)) %>%   
+  spread(key=scenario, value=ET) %>% 
+  dplyr::mutate(deficit = dplyr::if_else(hist > `85alt40pc`,hist - `85alt40pc`, 0)) %>% 
+  dplyr::mutate(surplus = dplyr::if_else(hist < `85alt40pc`,`85alt40pc` - hist, 0)) %>% 
+  dplyr::group_by(watershed) %>% 
+  dplyr::summarize(MAET_hist=sum(hist),
+                   MAET_85alt40pc=sum(`85alt40pc`),
+                   MAET_deficit=sum(deficit),
+                   MAET_surplus=sum(surplus)) %>% 
+  dplyr::mutate(MAET_diff = MAET_surplus - MAET_deficit)
+
+sur_def_q <- etqswe_day_gcm_mean %>% 
+  dplyr::filter(scenario != 45 & scenario != 85) %>% 
+  dplyr::select(-c(ET,SWE)) %>%   
+  spread(key=scenario, value=Q) %>% 
+  dplyr::mutate(deficit = dplyr::if_else(hist > `85alt40pc`,hist - `85alt40pc`, 0)) %>% 
+  dplyr::mutate(surplus = dplyr::if_else(hist < `85alt40pc`,`85alt40pc` - hist, 0)) %>% 
+  dplyr::group_by(watershed) %>% 
+  dplyr::summarize(MAQ_hist=sum(hist),
+                   MAQ_85alt40pc=sum(`85alt40pc`),
+                   MAQ_deficit=sum(deficit),
+                   MAQ_surplus=sum(surplus)) %>% 
+  dplyr::mutate(MAQ_diff = MAQ_surplus - MAQ_deficit)
+
+sur_def_swe <- etqswe_day_gcm_mean %>% 
+  dplyr::filter(scenario != 45 & scenario != 85) %>% 
+  dplyr::select(-c(ET,Q)) %>%   
+  spread(key=scenario, value=SWE) %>% 
+  dplyr::mutate(deficit = dplyr::if_else(hist > `85alt40pc`,hist - `85alt40pc`, 0)) %>% 
+  dplyr::mutate(surplus = dplyr::if_else(hist < `85alt40pc`,`85alt40pc` - hist, 0)) %>% 
+  dplyr::group_by(watershed) %>% 
+  dplyr::summarize(Mean_SWE_hist=mean(hist),
+                   Mean_SWE_85alt40pc=mean(`85alt40pc`),
+                   Mean_SWE_deficit=mean(deficit),
+                   Mean_SWE_surplus=mean(surplus)) %>% 
+  dplyr::mutate(Mean_SWE_diff = Mean_SWE_surplus - Mean_SWE_deficit)
+
+
+sur_def_et
+sur_def_q
+sur_def_swe
+
+write_csv(sur_def_et, "output/et_surplus_deficit_85alt40pc.csv")
+write_csv(sur_def_q, "output/q_surplus_deficit_85alt40pc.csv")
+write_csv(sur_def_swe, "output/swe_surplus_deficit_85alt40pc.csv")
 
 

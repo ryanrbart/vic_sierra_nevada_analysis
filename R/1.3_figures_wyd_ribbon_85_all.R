@@ -1,7 +1,7 @@
-# Ribbon Plots - all watersheds
+# Ribbon Plots - all watersheds - 85
 
 source("R/0_utilities.R")
-source("R/1.2_data_processing_combined.R")
+#source("R/1.2_data_processing_combined.R")
 
 # ---------------------------------------------------------------------
 # Plot setup
@@ -28,7 +28,7 @@ shed_id <- c(
 # Generate dataframe for ribbon
 # For geom_ribbon, need ymin and ymax to be different columns
 df_et_ribbon <- etqswe_day_gcm_mean_sub %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(Q,SWE)) %>%   
   spread(key=scenario, value=ET) 
 df_et_ribbon_def <- df_et_ribbon %>% 
@@ -40,7 +40,7 @@ df_et_ribbon_pos <- df_et_ribbon %>%
 # Generate dataframe for ribbon
 # For geom_ribbon, need ymin and ymax to be different columns
 df_q_ribbon <- etqswe_day_gcm_mean_sub %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(ET,SWE)) %>%   
   spread(key=scenario, value=Q) 
 df_q_ribbon_def <- df_q_ribbon %>% 
@@ -52,14 +52,14 @@ df_q_ribbon_pos <- df_q_ribbon %>%
 # Generate dataframe for ribbon
 # For geom_ribbon, need ymin and ymax to be different columns
 df_swe_ribbon_def <- etqswe_day_gcm_mean_sub %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85alt40pc") %>% 
   dplyr::select(-c(ET,Q)) %>%   
   spread(key=scenario, value=SWE) %>% 
   dplyr::filter(hist > `85`, wyd>0)
 
 # Generate dataframe for lines
 df_line <- etqswe_day_gcm_mean_sub %>% 
-  dplyr::filter(scenario != 45)
+  dplyr::filter(scenario != 45 & scenario != "85alt40pc")
 
 
 # ---------------------------------------------------------------------
@@ -77,7 +77,7 @@ x <- ggplot() +
   theme_bw(base_size = 13) +
   NULL
 plot(x)
-ggsave("output/mean_daily_et_ribbon_all.jpg", width = 6, height = 10)
+ggsave("output/mean_daily_et_ribbon_85_all.jpg", width = 6, height = 10)
 
 
 # Q
@@ -92,7 +92,7 @@ x <- ggplot() +
   theme_bw(base_size = 13) +
   NULL
 plot(x)
-ggsave("output/mean_daily_q_ribbon_all.jpg", width = 6, height = 10)
+ggsave("output/mean_daily_q_ribbon_85_all.jpg", width = 6, height = 10)
 
 
 # SWE
@@ -106,5 +106,5 @@ x <- ggplot() +
   theme_bw(base_size = 13) +
   NULL
 plot(x)
-ggsave("output/mean_daily_swe_ribbon_all.jpg", width = 6, height = 10)
+ggsave("output/mean_daily_swe_ribbon_85_all.jpg", width = 6, height = 10)
 

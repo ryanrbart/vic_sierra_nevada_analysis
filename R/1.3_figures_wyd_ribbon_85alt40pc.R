@@ -1,7 +1,7 @@
-# Ribbon Plots
+# Ribbon Plots - 85alt40pc
 
 source("R/0_utilities.R")
-source("R/1.2_data_processing_combined.R")
+#source("R/1.2_data_processing_combined.R")
 
 # ---------------------------------------------------------------------
 # Plot setup
@@ -21,38 +21,39 @@ shed_id <- c(
 # Generate dataframe for ribbon
 # For geom_ribbon, need ymin and ymax to be different columns
 df_et_ribbon <- etqswe_day_gcm_mean_sub %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85") %>% 
   dplyr::select(-c(Q,SWE)) %>%   
   spread(key=scenario, value=ET) 
 df_et_ribbon_def <- df_et_ribbon %>% 
-  dplyr::filter(hist > `85`, wyd>200)
-df_et_ribbon_pos <- df_et_ribbon %>% 
-  dplyr::filter(hist < `85`, wyd<300)
-
+  dplyr::filter(hist > `85alt40pc`, wyd>200)
+df_et_ribbon_pos1 <- df_et_ribbon %>% 
+  dplyr::filter(hist < `85alt40pc`, wyd<270)
+df_et_ribbon_pos2 <- df_et_ribbon %>% 
+  dplyr::filter(hist < `85alt40pc`, wyd>280)
 
 # Generate dataframe for ribbon
 # For geom_ribbon, need ymin and ymax to be different columns
 df_q_ribbon <- etqswe_day_gcm_mean_sub %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85") %>% 
   dplyr::select(-c(ET,SWE)) %>%   
   spread(key=scenario, value=Q) 
 df_q_ribbon_def <- df_q_ribbon %>% 
-  dplyr::filter(hist > `85`, wyd>100)
+  dplyr::filter(hist > `85alt40pc`, wyd>100)
 df_q_ribbon_pos <- df_q_ribbon %>% 
-  dplyr::filter(hist < `85`, wyd<300)
+  dplyr::filter(hist < `85alt40pc`, wyd<300)
 
 
 # Generate dataframe for ribbon
 # For geom_ribbon, need ymin and ymax to be different columns
 df_swe_ribbon_def <- etqswe_day_gcm_mean_sub %>% 
-  dplyr::filter(scenario != 45) %>% 
+  dplyr::filter(scenario != 45 & scenario != "85") %>% 
   dplyr::select(-c(ET,Q)) %>%   
   spread(key=scenario, value=SWE) %>% 
-  dplyr::filter(hist > `85`, wyd>0)
+  dplyr::filter(hist > `85alt40pc`, wyd>0)
 
 # Generate dataframe for lines
 df_line <- etqswe_day_gcm_mean_sub %>% 
-  dplyr::filter(scenario != 45)
+  dplyr::filter(scenario != 45 & scenario != "85")
 
 
 # ---------------------------------------------------------------------
@@ -60,8 +61,9 @@ df_line <- etqswe_day_gcm_mean_sub %>%
 
 # ET
 x <- ggplot() +
-  geom_ribbon(data=df_et_ribbon_def, aes(x=date, ymin=`85`, ymax=hist), fill="firebrick2") +
-  geom_ribbon(data=df_et_ribbon_pos, aes(x=date, ymin=hist, ymax=`85`), fill="dodgerblue") +
+  geom_ribbon(data=df_et_ribbon_def, aes(x=date, ymin=`85alt40pc`, ymax=hist), fill="firebrick2") +
+  geom_ribbon(data=df_et_ribbon_pos1, aes(x=date, ymin=hist, ymax=`85alt40pc`), fill="dodgerblue") +
+  geom_ribbon(data=df_et_ribbon_pos2, aes(x=date, ymin=hist, ymax=`85alt40pc`), fill="dodgerblue") +
   geom_line(data=df_line, aes(x=date, y=ET, color=scenario)) +
   scale_x_date(labels = date_format("%b")) +
   scale_color_brewer(palette="Paired", name="Scenario", labels = c("Historical","8.5")) +
@@ -70,13 +72,13 @@ x <- ggplot() +
   theme_bw(base_size = 13) +
   NULL
 plot(x)
-ggsave("output/mean_daily_et_ribbon.jpg", width = 6, height = 5)
+ggsave("output/mean_daily_et_ribbon_85alt40pc.jpg", width = 6, height = 5)
 
 
 # Q
 x <- ggplot() +
-  geom_ribbon(data=df_q_ribbon_def, aes(x=date, ymin=`85`, ymax=hist), fill="firebrick2") +
-  geom_ribbon(data=df_q_ribbon_pos, aes(x=date, ymin=hist, ymax=`85`), fill="dodgerblue2") +
+  geom_ribbon(data=df_q_ribbon_def, aes(x=date, ymin=`85alt40pc`, ymax=hist), fill="firebrick2") +
+  geom_ribbon(data=df_q_ribbon_pos, aes(x=date, ymin=hist, ymax=`85alt40pc`), fill="dodgerblue2") +
   geom_line(data=df_line, aes(x=date, y=Q, color=scenario)) +
   scale_x_date(labels = date_format("%b")) +
   scale_color_brewer(palette="Paired", name="Scenario", labels = c("Historical","8.5")) +
@@ -85,12 +87,12 @@ x <- ggplot() +
   theme_bw(base_size = 13) +
   NULL
 plot(x)
-ggsave("output/mean_daily_q_ribbon.jpg", width = 6, height = 5)
+ggsave("output/mean_daily_q_ribbon_85alt40pc.jpg", width = 6, height = 5)
 
 
 # SWE
 x <- ggplot() +
-  geom_ribbon(data=df_swe_ribbon_def, aes(x=date, ymin=`85`, ymax=hist), fill="red") +
+  geom_ribbon(data=df_swe_ribbon_def, aes(x=date, ymin=`85alt40pc`, ymax=hist), fill="red") +
   geom_line(data=df_line, aes(x=date, y=SWE, color=scenario)) +
   scale_x_date(labels = date_format("%b")) +
   scale_color_brewer(palette="Paired", name="Scenario", labels = c("Historical","8.5")) +
@@ -99,5 +101,5 @@ x <- ggplot() +
   theme_bw(base_size = 13) +
   NULL
 plot(x)
-ggsave("output/mean_daily_swe_ribbon.jpg", width = 6, height = 5)
+ggsave("output/mean_daily_swe_ribbon_85alt40pc.jpg", width = 6, height = 5)
 
