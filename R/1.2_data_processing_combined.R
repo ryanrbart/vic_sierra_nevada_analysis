@@ -23,13 +23,7 @@ consolidate_shed_data <- function(x){
   y <- x %>% 
     purrr::map(function(x)(mutate(x,year=year(Day), month=month(Day), day=day(Day)))) %>% 
     bind_rows(.id="type") %>% 
-    separate(type, into=c("watershed","gcm","scenario")) %>% 
-    mutate(season = case_when(
-      (month==1)~"1",(month==2)~"1",(month==3)~"1",
-      (month==4)~"2",(month==5)~"2",(month==6)~"2",
-      (month==7)~"3",(month==8)~"3",(month==9)~"3",
-      (month==10)~"4",(month==11)~"4",(month==12)~"4"
-    ))
+    separate(type, into=c("watershed","gcm","scenario"))
   return(y)
 }
 
@@ -67,8 +61,9 @@ etqswe_d <- etqswe_d %>%
 # Select only end of the century years for 4.5 and 8.5 scenarios
 etqswe_d <- etqswe_d %>% 
   dplyr::filter(scenario == "hist" |
-                  (scenario == 45 & year >= 2070) |
-                  (scenario == 85 & year >= 2070))
+                  (scenario == "45" & year >= 2070) |
+                  (scenario == "85" & year >= 2070) |
+                  (scenario == "85alt40pc" & year >= 2070))
 
 # Group data by wateryearday
 etqswe_day <- etqswe_d %>% 
@@ -83,7 +78,7 @@ etqswe_day_gcm_mean <- etqswe_day %>%
             SWE = mean(SWE))
 
 # Change scenario and watershed columns to factor
-scenario_levels <- c("hist", "45", "85")
+scenario_levels <- c("hist", "45", "85", "85alt40pc")
 etqswe_day$scenario <- factor(etqswe_day$scenario, levels = scenario_levels)
 etqswe_day_gcm_mean$scenario <- factor(etqswe_day_gcm_mean$scenario, levels = scenario_levels)
 shed_levels <- c("american","cosumnes","mokelumne","stan",
