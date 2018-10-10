@@ -70,7 +70,7 @@ etqswe_day <- etqswe_d %>%
   group_by(watershed, scenario, gcm, wyd) %>% 
   summarize(Q = mean(Q),
             ET = mean(ET),
-            SWE = max(SWE))
+            SWE = mean(SWE))
 etqswe_day_gcm_mean <- etqswe_day %>% 
   group_by(watershed, scenario, wyd) %>% 
   summarize(Q = mean(Q),   # For plotting mean line
